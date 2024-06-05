@@ -19,17 +19,17 @@ export default class App extends React.Component {
   }
   
   componentDidMount() {
-    console.log("componentDidMount");
+    // console.log("componentDidMount");
       axios.get(URL)
       .then(res => {
-        console.log("res -> ", res.data)
+        // console.log("res -> ", res.data)
         this.setState({
           todos: res.data.data.map(item => ({
             id: item.id, name: item.name, completed: item.completed
           })),
           toDo: ''
         });
-        console.log("Todos state", this.state.todos)
+        // console.log("Todos state", this.state.todos)
       })
       .catch(err => {
         console.error(err)
@@ -77,7 +77,7 @@ export default class App extends React.Component {
 
   toggleHideCompleted = () => {
     this.setState(prevState => ({ hideCompleted: !prevState.hideCompleted }), () => {
-      console.log(this.state.hideCompleted)
+      // console.log(this.state.hideCompleted)
     });
   }
 
