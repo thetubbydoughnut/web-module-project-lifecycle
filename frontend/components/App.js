@@ -34,12 +34,49 @@ export default class App extends React.Component {
       })
   }
 
-  
+  handleSubmit = (e) => {
+    e.preventDefault();
+    if (this.state.name.trim()) {
+      axios.post(URL, {
+        name: this.state.name,
+        completed: this.state.completed
+      })
+      .then(res => {
+        this.setState(prevState => ({
+          todos: [...prevState.todos, res.data],
+          name: ""
+        }));
+      })
+      .catch(err => {
+        console.error(err)
+      })
+    }
+  }
+
+    handleToggleComplete = (id) => {
+      this.setState(prevState => {
+        const todo = prevState.todos.find(todo => todo.id === id);
+        return {
+          todos: prevState.todos.map(todo => 
+            todo.id === id ? {...todo, completed: !todo.completed} : todo
+            ),
+            completed: !todo.completed
+          };
+        }, () => {
+          axios.patch(`${URL}/${id}`, {
+            completed: this.state.completed
+          })
+          .catch(err => {
+            console.error(err)
+          });
+        })
+    }
+
   render() {
     return <>
       <div>
-      <TodoList todos={this.state.todos} toggleComplete={this.toggleComplete}/>
-      <Form updateToDoList={this.updateToDoList} handleInputChange={this.handleInputChange} inputValue={this.state.toDo}/>
+      <TodoList todos={this.state.todos} toggleComplete={this.handleToggleComplete}/>
+      <Form handleSubmit={this.handleSubmit} handleInputChange={this.handleInputChange} inputValue={this.state.name}/>
 
       </div>
     </>
