@@ -12,7 +12,8 @@ export default class App extends React.Component {
       todos: [],
       name: '',
       completed: false,
-      hideCompleted: false
+      hideCompleted: false,
+      toDo: ''
     }
 
   }
@@ -24,7 +25,7 @@ export default class App extends React.Component {
         console.log("res -> ", res.data)
         this.setState({
           todos: res.data.data.map(item => ({
-            id: item.id, name: item.name, completed: false
+            id: item.id, name: item.name, completed: item.completed
           })),
           toDo: ''
         });
@@ -56,22 +57,18 @@ export default class App extends React.Component {
 
   handleToggleComplete = (id) => {
       this.setState(prevState => {
-        const todo = prevState.todos.find(todo => todo.id === id);
-        return {
-          todos: prevState.todos.map(todo => 
+        const updatedTodos = prevState.todos.map(todo => 
             todo.id === id ? {...todo, completed: !todo.completed} : todo
-            ),
-            completed: !todo.completed
-          };
-        }, () => {
+          )
+          const UpdatedTodo = this.state.todos.find(todo => todo.id === id);
           axios.patch(`${URL}/${id}`, {
-            completed: this.state.completed
+            completed: UpdatedTodo.completed
           })
           .catch(err => {
-          console.error(err)
-        });
-      }
-    )
+            console.error(err)
+          });
+          return {todos: updatedTodos}
+      })
   }
 
   handleInputChange = (e) => {
@@ -79,13 +76,15 @@ export default class App extends React.Component {
   }
 
   toggleHideCompleted = () => {
-    this.setState(prevState => ({ hideCompleted: !prevState.hideCompleted }));
+    this.setState(prevState => ({ hideCompleted: !prevState.hideCompleted }), () => {
+      console.log(this.state.hideCompleted)
+    });
   }
 
   render() {
     return <>
       <div>
-        <TodoList todos={this.state.todos} toggleComplete={this.handleToggleComplete}/>
+        <TodoList todos={this.state.todos} toggleComplete={this.handleToggleComplete} hideCompleted={this.state.hideCompleted}/>
         <Form handleSubmit={this.handleSubmit} handleInputChange={this.handleInputChange} inputValue={this.state.toDo}/>
       </div>
         <button onClick={this.toggleHideCompleted}>
