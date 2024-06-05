@@ -11,7 +11,8 @@ export default class App extends React.Component {
     this.state = {
       todos: [],
       name: '',
-      completed: false
+      completed: false,
+      hideCompleted: false
     }
 
   }
@@ -36,9 +37,9 @@ export default class App extends React.Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
-    if (this.state.name.trim()) {
+    if (this.state.toDo.trim()) {
       axios.post(URL, {
-        name: this.state.name,
+        name: this.state.toDo,
         completed: this.state.completed
       })
       .then(res => {
@@ -53,7 +54,7 @@ export default class App extends React.Component {
     }
   }
 
-    handleToggleComplete = (id) => {
+  handleToggleComplete = (id) => {
       this.setState(prevState => {
         const todo = prevState.todos.find(todo => todo.id === id);
         return {
@@ -67,18 +68,29 @@ export default class App extends React.Component {
             completed: this.state.completed
           })
           .catch(err => {
-            console.error(err)
-          });
-        })
-    }
+          console.error(err)
+        });
+      }
+    )
+  }
+
+  handleInputChange = (e) => {
+    this.setState({ toDo: e.target.value})
+  }
+
+  toggleHideCompleted = () => {
+    this.setState(prevState => ({ hideCompleted: !prevState.hideCompleted }));
+  }
 
   render() {
     return <>
       <div>
-      <TodoList todos={this.state.todos} toggleComplete={this.handleToggleComplete}/>
-      <Form handleSubmit={this.handleSubmit} handleInputChange={this.handleInputChange} inputValue={this.state.name}/>
-
+        <TodoList todos={this.state.todos} toggleComplete={this.handleToggleComplete}/>
+        <Form handleSubmit={this.handleSubmit} handleInputChange={this.handleInputChange} inputValue={this.state.toDo}/>
       </div>
+        <button onClick={this.toggleHideCompleted}>
+          {this.state.hideCompleted ? "Show" : "Hide"} Completed
+        </button>
     </>
   }
 }

@@ -4,6 +4,8 @@ import Todo from './Todo'
 
 export default class TodoList extends React.Component {
   render() {
+    const todos = this.props.hideCompleted 
+    ? this.props.todos.filter(todo => !todo.completed) : this.props.todos;
     return (
       <div>
       <h1>Todos:</h1>
